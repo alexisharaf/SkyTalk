@@ -46,7 +46,30 @@ namespace SkyTalk
                 // Соединяем сокет с удаленной точкой
                 socketsender.Connect(ipEndPoint);
 
+                do
+                {
 
+                    //Console.Write("Введите сообщение: ");
+                    //message = Console.ReadLine();
+
+                    //Console.WriteLine("Сокет соединяется с {0} ", sender.RemoteEndPoint.ToString());
+                    byte[] msg = Encoding.UTF8.GetBytes(message);
+
+                    // Отправляем данные через сокет
+                    int bytesSent = socketsender.Send(msg);
+
+                    // Получаем ответ от сервера
+                    int bytesRec = socketsender.Receive(bytes);
+
+                    //Console.WriteLine("\nОтвет от сервера: {0}\n\n", Encoding.UTF8.GetString(bytes, 0, bytesRec));
+
+
+                }
+                while (message.IndexOf("#END#") == -1);
+
+                // Освобождаем сокет
+                socketsender.Shutdown(SocketShutdown.Both);
+                socketsender.Close();
 
             }
             catch (Exception ex)

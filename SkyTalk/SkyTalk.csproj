@@ -79,5 +79,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TalkClient\TalkClient.csproj">
+      <Project>{33b16bb2-a1ec-46b9-8090-7c7c79be1e0d}</Project>
+      <Name>TalkClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TalkServer\TalkServer.csproj">
+      <Project>{623f74fb-16ca-478e-a070-5ea4feed62fa}</Project>
+      <Name>TalkServer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
