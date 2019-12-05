@@ -22,7 +22,8 @@ namespace SkyTalk
         IPAddress ipAddr;
 
         Thread commandThread;
-        
+       
+
 
         public SkyTalkServerMainForm()
         {
@@ -44,6 +45,7 @@ namespace SkyTalk
 
 
             commandThread = new Thread(ControlCommandsFlow);
+           // formatter = new BinaryFormatter();
 
         }
 
@@ -79,7 +81,7 @@ namespace SkyTalk
 
                     // Мы дождались клиента, пытающегося с нами соединиться
 
-                    byte[] bytes = new byte[65500];
+                    byte[] bytes = new byte[65000];
                     int bytesRec = handler.Receive(bytes);
 
                     //data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
@@ -110,10 +112,10 @@ namespace SkyTalk
                 
 
             }
-         //   catch (Exception ex)
-         //   {
-         //       MessageBox.Show(ex.ToString());
-         //   }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
             finally
             {
                 handler.Shutdown(SocketShutdown.Both);
