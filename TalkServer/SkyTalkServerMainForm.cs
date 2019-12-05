@@ -52,7 +52,7 @@ namespace SkyTalk
             try
             {
                 sListener.Bind(ipEndPoint);
-                sListener.Listen(10);
+               // sListener.Listen(10);
 
                 userListListBox.Items.Add("data");
                 logListBox.Items.Add("fjsdlkg");
@@ -62,7 +62,7 @@ namespace SkyTalk
                        Socket handler = sListener.Accept();
 
                        userListListBox.Items.Add("data");
-                       logTextBox.Text += "data\n";
+                       logListBox.Text += "data\n";
 
                        // Начинаем слушать соединения
                        while (true)
