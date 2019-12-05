@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TalkServer", "TalkServer\Ta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TalkClient", "TalkClient\TalkClient.csproj", "{33B16BB2-A1EC-46B9-8090-7C7C79BE1E0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageClass", "MessageClass\MessageClass.csproj", "{9C8ECBA7-489E-4F2C-A4F6-66970FE75135}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{33B16BB2-A1EC-46B9-8090-7C7C79BE1E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33B16BB2-A1EC-46B9-8090-7C7C79BE1E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33B16BB2-A1EC-46B9-8090-7C7C79BE1E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C8ECBA7-489E-4F2C-A4F6-66970FE75135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C8ECBA7-489E-4F2C-A4F6-66970FE75135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C8ECBA7-489E-4F2C-A4F6-66970FE75135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C8ECBA7-489E-4F2C-A4F6-66970FE75135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
