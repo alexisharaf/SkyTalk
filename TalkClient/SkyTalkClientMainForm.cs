@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace SkyTalk
 {
@@ -35,7 +37,7 @@ namespace SkyTalk
             // Устанавливаем удаленную точку для сокета
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
 
-            string message = "#END#";
+            string message = "Привет";
 
             try
             {
@@ -46,8 +48,8 @@ namespace SkyTalk
                 // Соединяем сокет с удаленной точкой
                 socketsender.Connect(ipEndPoint);
 
-                do
-                {
+              // do
+               // {
 
                     //Console.Write("Введите сообщение: ");
                     //message = Console.ReadLine();
@@ -55,17 +57,35 @@ namespace SkyTalk
                     //Console.WriteLine("Сокет соединяется с {0} ", sender.RemoteEndPoint.ToString());
                     byte[] msg = Encoding.UTF8.GetBytes(message);
 
-                    // Отправляем данные через сокет
-                    int bytesSent = socketsender.Send(msg);
+                MessageClass mess = new MessageClass();
 
+                mess.User = "user1";
+                mess.Password = "pass";
+                mess.Command = "Connect";
+                mess.Data = "fdgfdgdfgfd";
+
+                BinaryFormatter serializer = new BinaryFormatter();
+
+                MemoryStream mem_stream = new MemoryStream();
+                serializer.Serialize(mem_stream, mess);
+
+                
+                // Отправляем данные через сокет
+                int bytesSent = socketsender.Send(mem_stream.GetBuffer());
+
+
+             
+                
                     // Получаем ответ от сервера
                     int bytesRec = socketsender.Receive(bytes);
+                
+                    string data = Encoding.UTF8.GetString(bytes, 0, bytesRec);
 
-                    //Console.WriteLine("\nОтвет от сервера: {0}\n\n", Encoding.UTF8.GetString(bytes, 0, bytesRec));
+                userListListBox.Items.Add(data);
 
 
-                }
-                while (message.IndexOf("#END#") == -1);
+               // }
+               // while (message.IndexOf("#END#") == -1);
 
                 // Освобождаем сокет
                 socketsender.Shutdown(SocketShutdown.Both);

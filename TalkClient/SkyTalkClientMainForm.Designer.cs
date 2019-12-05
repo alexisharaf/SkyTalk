@@ -62,6 +62,7 @@
             this.serverIpTextBox.Name = "serverIpTextBox";
             this.serverIpTextBox.Size = new System.Drawing.Size(116, 20);
             this.serverIpTextBox.TabIndex = 2;
+            this.serverIpTextBox.Text = "192.168.0.7";
             // 
             // portTextBox
             // 
@@ -105,7 +106,7 @@
             this.userNameTextBox.Size = new System.Drawing.Size(116, 20);
             this.userNameTextBox.TabIndex = 7;
             // 
-            // MainForm
+            // SkyTalkClientMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -118,7 +119,7 @@
             this.Controls.Add(this.serverIpTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "MainForm";
+            this.Name = "SkyTalkClientMainForm";
             this.Text = "TalkClient";
             this.ResumeLayout(false);
             this.PerformLayout();
