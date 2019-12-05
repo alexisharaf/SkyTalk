@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SkyTalk
 {
@@ -43,7 +45,7 @@ namespace SkyTalk
         {
 
 
-            ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex - 1];
+            ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
 
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, Convert.ToInt32(portNumberTextBox.Text));
             
@@ -52,20 +54,18 @@ namespace SkyTalk
             try
             {
                 sListener.Bind(ipEndPoint);
-               // sListener.Listen(10);
+                sListener.Listen(10);
 
-                userListListBox.Items.Add("data");
-                logListBox.Items.Add("fjsdlkg");
-
+               // userListListBox.Items.Add("Запускаем сервер");
+                logListBox.Items.Add("Запускаем сервер");
 
                 
-                       Socket handler = sListener.Accept();
+                
+                Socket handler = sListener.Accept();
 
-                       userListListBox.Items.Add("data");
-                       logListBox.Text += "data\n";
-
-                       // Начинаем слушать соединения
-                       while (true)
+                logListBox.Items.Add("К серверу подключились. Получаем данные");
+                // Начинаем слушать соединения
+                while (true)
                        {
 
                            string data = null;
@@ -75,12 +75,22 @@ namespace SkyTalk
                            byte[] bytes = new byte[1024];
                            int bytesRec = handler.Receive(bytes);
 
-                           data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                           //data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
 
+                    MemoryStream mem_stream = new MemoryStream(bytes);
+                    BinaryFormatter formatter = new BinaryFormatter();
 
+                    MessageClass message = new MessageClass();
 
-                           // Отправляем ответ клиенту
-                           string reply = "Получено символов: " + data.Length.ToString();
+                   
+                    message = (MessageClass)formatter.Deserialize(mem_stream);
+
+                  
+                    logListBox.Items.Add(message.User.ToString());
+
+                    
+                    // Отправляем ответ клиенту
+                    string reply = "Получено символов: " + bytes.Length.ToString();
 
                            byte[] msg = Encoding.UTF8.GetBytes(reply);
 
