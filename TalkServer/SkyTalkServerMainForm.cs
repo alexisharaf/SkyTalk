@@ -68,15 +68,15 @@ namespace SkyTalk
                 
                 logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("Запускаем сервер"); });
 
-                handler = sListener.Accept();
-
-                logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("К серверу подключились. Получаем данные"); });
+               
 
                 
                 // Начинаем слушать соединения
                 while (true)
                 {
+                    handler = sListener.Accept();
 
+                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("К серверу подключились. Получаем данные"); });
                     string data = null;
 
                     // Мы дождались клиента, пытающегося с нами соединиться
@@ -86,27 +86,29 @@ namespace SkyTalk
 
                     //data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
 
-                    MemoryStream mem_stream = new MemoryStream(bytes);
-                    BinaryFormatter formatter = new BinaryFormatter();
+                    if (bytesRec != 0)
+                    {
+                        MemoryStream mem_stream = new MemoryStream(bytes);
+                        BinaryFormatter formatter = new BinaryFormatter();
 
-                    MessageClass message = new MessageClass();
+                        //MessageClass message = new MessageClass();
 
 
-                    message = (MessageClass)formatter.Deserialize(mem_stream);
+                        MessageClass message = (MessageClass)formatter.Deserialize(mem_stream);
 
-                    logListBox.BeginInvoke((Action) delegate () { logListBox.Items.Add(message.User.ToString()); } ) ;
-                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
-                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
-                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
-                    
+                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.User.ToString()); });
+                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
+                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
+                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
 
-                    // Отправляем ответ клиенту
-                    string reply = "Получено символов: " + mem_stream.Length.ToString();
 
-                    byte[] msg = Encoding.UTF8.GetBytes(reply);
+                        // Отправляем ответ клиенту
+                        string reply = "Получено символов: " + mem_stream.Length.ToString();
 
-                    handler.Send(msg);
+                        byte[] msg = Encoding.UTF8.GetBytes(reply);
 
+                        handler.Send(msg);
+                    }
                 }
 
                 
@@ -118,8 +120,10 @@ namespace SkyTalk
             }
             finally
             {
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
+                //   handler.Shutdown(SocketShutdown.Both);
+                //   handler.Close();
+
+                MessageBox.Show("Все пропало");
             }
         
 
