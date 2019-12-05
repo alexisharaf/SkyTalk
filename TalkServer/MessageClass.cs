@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SkyTalk
 {
-    [Serializable]
+    [Serializable()]
     class MessageClass
     {
         public string User;
