@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageClass.cs" />
     <Compile Include="SkyTalkClientMainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +79,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MessageClass\MessageClass.csproj">
+      <Project>{9c8ecba7-489e-4f2c-a4f6-66970fe75135}</Project>
+      <Name>MessageClass</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
