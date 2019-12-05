@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace SkyTalk
 {
@@ -19,6 +20,9 @@ namespace SkyTalk
 
         IPHostEntry ipHost;
         IPAddress ipAddr;
+
+        Thread commandThread;
+        
 
         public SkyTalkServerMainForm()
         {
@@ -33,22 +37,25 @@ namespace SkyTalk
             for (int i = 0; i < ipHost.AddressList.Length; i++)
             {
                 ipAdressComboBox.Items.Add(ipHost.AddressList[i].ToString());
-
-                 
             }
-            
-           // IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
+
+            // IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
+
+
+
+            commandThread = new Thread(ControlCommandsFlow);
 
         }
 
-        private void startServerButton_Click(object sender, EventArgs e)
+
+        private void ControlCommandsFlow()
         {
+            Socket handler = null;
 
-
-            ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
+            //ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
 
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, Convert.ToInt32(portNumberTextBox.Text));
-            
+
             Socket sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             try
@@ -56,69 +63,77 @@ namespace SkyTalk
                 sListener.Bind(ipEndPoint);
                 sListener.Listen(10);
 
-               // userListListBox.Items.Add("Запускаем сервер");
-                logListBox.Items.Add("Запускаем сервер");
+                
+                logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("Запускаем сервер"); });
+
+                handler = sListener.Accept();
+
+                logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("К серверу подключились. Получаем данные"); });
 
                 
-                
-                Socket handler = sListener.Accept();
-
-                logListBox.Items.Add("К серверу подключились. Получаем данные");
                 // Начинаем слушать соединения
                 while (true)
-                       {
+                {
 
-                           string data = null;
+                    string data = null;
 
-                           // Мы дождались клиента, пытающегося с нами соединиться
+                    // Мы дождались клиента, пытающегося с нами соединиться
 
-                           byte[] bytes = new byte[1024];
-                           int bytesRec = handler.Receive(bytes);
+                    byte[] bytes = new byte[65500];
+                    int bytesRec = handler.Receive(bytes);
 
-                           //data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                    //data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
 
                     MemoryStream mem_stream = new MemoryStream(bytes);
                     BinaryFormatter formatter = new BinaryFormatter();
 
                     MessageClass message = new MessageClass();
 
-                   
+
                     message = (MessageClass)formatter.Deserialize(mem_stream);
 
-                  
-                    logListBox.Items.Add(message.User.ToString());
-
+                    logListBox.BeginInvoke((Action) delegate () { logListBox.Items.Add(message.User.ToString()); } ) ;
+                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
+                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
+                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
                     
+
                     // Отправляем ответ клиенту
-                    string reply = "Получено символов: " + bytes.Length.ToString();
+                    string reply = "Получено символов: " + mem_stream.Length.ToString();
 
-                           byte[] msg = Encoding.UTF8.GetBytes(reply);
+                    byte[] msg = Encoding.UTF8.GetBytes(reply);
 
-                           handler.Send(msg);
+                    handler.Send(msg);
 
-                           if (data.IndexOf("#END#") > -1)
-                           {
-                               Console.WriteLine("Клиент отключился.");
-                               break;
-                           }
+                }
 
+                
 
-                       }
-
-                       handler.Shutdown(SocketShutdown.Both);
-                       handler.Close();
-                       
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+         //   catch (Exception ex)
+         //   {
+         //       MessageBox.Show(ex.ToString());
+         //   }
             finally
             {
-                Console.ReadLine();
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
             }
+        
 
 
+        }
+
+
+
+
+        private void startServerButton_Click(object sender, EventArgs e)
+        {
+
+            ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
+
+            commandThread.Start();
+            
         }
     }
 }
