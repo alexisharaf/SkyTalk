@@ -70,7 +70,7 @@ namespace SkyTalk
         {
             Socket handler = null;
 
-            //ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
+          
 
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11100);
 
@@ -90,33 +90,27 @@ namespace SkyTalk
 
                 this.Invoke(this.addLogDelegate, "Запускаем сервер");
 
-                // Начинаем слушать соединения
-               // handler = sListener.Accept();
-
+              
                
                 while (true)
                 {
                     // Начинаем слушать соединения
                     handler = sListener.Accept();
-
-
-
-
-                    //string data = null;
+                   
 
                     // Мы дождались клиента, пытающегося с нами соединиться
 
                     byte[] bytes = new byte[65000];
                     int bytesRec = handler.Receive(bytes);
 
-                    //data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                   
 
                     if (bytesRec != 0)
                     {
                         MemoryStream mem_stream = new MemoryStream(bytes);
                         BinaryFormatter formatter = new BinaryFormatter();
 
-                        //MessageClass message = new MessageClass();
+                       
 
 
                         MessageClass message = (MessageClass)formatter.Deserialize(mem_stream);
@@ -172,9 +166,7 @@ namespace SkyTalk
 
 
                         // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.User.ToString()); });
-                        // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
-                        // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
-                        // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
+                        
 
                         backmessage.User = message.User;
                         backmessage.Password = "";
@@ -187,7 +179,7 @@ namespace SkyTalk
 
                         handler.Send(ans_mem_stream.GetBuffer());
 
-                        Thread.Sleep(300);
+                      
 
                     }
                 }
