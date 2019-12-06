@@ -23,6 +23,8 @@ namespace SkyTalk
 
         Thread commandThread;
 
+        
+
         public delegate void AddLogItem(String myString);
         public AddLogItem addLogDelegate;
 
@@ -47,8 +49,9 @@ namespace SkyTalk
 
 
             commandThread = new Thread(ControlCommandsFlow);
-           // formatter = new BinaryFormatter();
+            // formatter = new BinaryFormatter();
 
+            
         }
 
 
@@ -95,7 +98,7 @@ namespace SkyTalk
 
 
 
-                    string data = null;
+                    //string data = null;
 
                     // Мы дождались клиента, пытающегося с нами соединиться
 
@@ -128,6 +131,8 @@ namespace SkyTalk
                             {
                                 backmessage.Command = "Connect";
                                 backmessage.Data = "Тут будет номер порта";
+
+                                ThreadPool.QueueUserWorkItem(userthread, new UserTreadClass());
 
                                 //на каждого клента будет запускаться отдельный поток с отдельным новым сокетом на индивидуальном порту.
                                //возможно я не прав, и есть другой путь.
@@ -233,6 +238,12 @@ namespace SkyTalk
 
             usersTableAdapter.Fill(this.skytalkDataSet.users);
             logTableAdapter.Fill(this.skytalkDataSet.log);
+
+        }
+
+
+        private  void userthread(object stateInfo)
+        {
 
         }
 
