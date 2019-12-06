@@ -69,6 +69,10 @@ namespace SkyTalk
 
             Socket sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
+
+            MessageClass backmessage = new MessageClass();
+
+
             try
             {
                 sListener.Bind(ipEndPoint);
@@ -79,15 +83,15 @@ namespace SkyTalk
 
                 this.Invoke(this.addLogDelegate, "Запускаем сервер");
 
-               
-
-                
                 // Начинаем слушать соединения
+                handler = sListener.Accept();
+
+
+               
                 while (true)
                 {
-                    handler = sListener.Accept();
+                   
 
-                    //logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("К серверу подключились. Получаем данные"); });
                     string data = null;
 
                     // Мы дождались клиента, пытающегося с нами соединиться
@@ -107,18 +111,54 @@ namespace SkyTalk
 
                         MessageClass message = (MessageClass)formatter.Deserialize(mem_stream);
 
-                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.User.ToString()); });
-                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
-                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
-                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
+                        this.Invoke(this.addLogDelegate, "Подключился пользователь " + message.User.ToString());
+                        this.Invoke(this.addLogDelegate, "С паролем " + message.Password.ToString());
+                        this.Invoke(this.addLogDelegate, "С командой " + message.Command.ToString());
+                        this.Invoke(this.addLogDelegate, "С адреса "  + message.Data.ToString());
+
+                       
+                        int index = this.usersBindingSource.Find("username", message.User);
+
+                       if ( index > -1)
+                        {
+                            if(skytalkDataSet.users.Rows[index]["password"].Equals( message.Password) == true)
+                            {
+                                backmessage.Command = "ОК";
+                                backmessage.Data = "Тут будет список пользователей онлaйн";
+                            }
+                            else
+                            {
+                                backmessage.Command = "PasswordWrong";
+                                backmessage.Data = "Плохой пароль";
+                                this.Invoke(this.addLogDelegate, "Плохой пароль ");
+                            }
+                        }
+                        else
+                        {
+                            backmessage.Command = "ConnectWrong";
+                            backmessage.Data = "Пользователь не найден";
+                            this.Invoke(this.addLogDelegate, "Пользователь не найден " );
+                        }
 
 
-                        // Отправляем ответ клиенту
-                        string reply = "Получено символов: " + mem_stream.Length.ToString();
+                        // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.User.ToString()); });
+                        // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
+                        // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
+                        // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
 
-                        byte[] msg = Encoding.UTF8.GetBytes(reply);
+                        backmessage.User = message.User;
+                        backmessage.Password = "";
 
-                        handler.Send(msg);
+                        BinaryFormatter serializer = new BinaryFormatter();
+
+                        MemoryStream ans_mem_stream = new MemoryStream();
+                        serializer.Serialize(ans_mem_stream, backmessage);
+
+
+                        handler.Send(ans_mem_stream.GetBuffer());
+
+                        Thread.Sleep(300);
+
                     }
                 }
 
