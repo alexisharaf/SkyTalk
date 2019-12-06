@@ -12,41 +12,60 @@ using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Threading;
 
 namespace SkyTalk
 {
     public partial class SkyTalkClientMainForm : Form
     {
 
+        IPHostEntry localIPHost;
+        IPAddress localipAddr;
+
+
         public SkyTalkClientMainForm()
         {
             InitializeComponent();
+
+
+
+
+            localIPHost = Dns.GetHostEntry(Dns.GetHostName());
+            //ipAddr = ipHost.AddressList[0];
+
+            for (int i = 0; i < localIPHost.AddressList.Length; i++)
+            {
+                localIPcomboBox.Items.Add(localIPHost.AddressList[i].ToString());
+            }
+
+
 
         }
 
         private void connectToServerButton_Click(object sender, EventArgs e)
         {
             // Буфер для входящих данных
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[65000];
+
+            localipAddr = localIPHost.AddressList[localIPcomboBox.SelectedIndex];
+
 
             // Соединяемся с удаленным устройством
 
-            IPAddress ipAddr = IPAddress.Parse(serverIpTextBox.Text);
+            IPAddress remoteipAddr = IPAddress.Parse(serverIpTextBox.Text);
            
 
             // Устанавливаем удаленную точку для сокета
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
+            IPEndPoint remoteipEndPoint = new IPEndPoint(remoteipAddr, 11111);
 
             string message = "Привет";
 
             try
-            {
-
-                //Создаем сокет
-                Socket socketsender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            {                //Создаем сокет
+                Socket socketsender = new Socket(remoteipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
                 // Соединяем сокет с удаленной точкой
-                socketsender.Connect(ipEndPoint);
+                socketsender.Connect(remoteipEndPoint);
 
               // do
                // {
@@ -59,10 +78,10 @@ namespace SkyTalk
 
                 MessageClass mess = new MessageClass();
 
-                mess.User = "user1";
-                mess.Password = "pass";
+                mess.User = userNameTextBox.Text.Trim();
+                mess.Password = passTextBox.Text.Trim();
                 mess.Command = "Connect";
-                mess.Data = "fdgfdgdfgfd";
+                mess.Data = localipAddr.ToString();
 
                 BinaryFormatter serializer = new BinaryFormatter();
 
@@ -73,15 +92,27 @@ namespace SkyTalk
                 // Отправляем данные через сокет
                 int bytesSent = socketsender.Send(mem_stream.GetBuffer());
 
+                Thread.Sleep(500);
 
-             
-                
+               
+
                     // Получаем ответ от сервера
-                    int bytesRec = socketsender.Receive(bytes);
-                
-                    string data = Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                int bytesRec = socketsender.Receive(bytes);
 
-                userListListBox.Items.Add(data);
+                MessageClass ansmessage = null;
+                 if (bytesRec > 0)
+                 {
+
+
+                     MemoryStream ans_mem_stream = new MemoryStream(bytes);
+                     BinaryFormatter formatter = new BinaryFormatter();
+                                       
+                     ansmessage = (MessageClass)formatter.Deserialize(ans_mem_stream);
+                 }
+
+                //string data = Encoding.UTF8.GetString(bytes, 0, bytesRec);
+
+                userListListBox.Items.Add(ansmessage.Data);
 
 
                // }
