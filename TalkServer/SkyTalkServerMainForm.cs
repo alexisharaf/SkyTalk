@@ -41,7 +41,7 @@ namespace SkyTalk
                 ipAdressComboBox.Items.Add(ipHost.AddressList[i].ToString());
             }
 
-            // IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
+        
 
             addLogDelegate = new AddLogItem(updatelog);
 
@@ -84,15 +84,15 @@ namespace SkyTalk
                 this.Invoke(this.addLogDelegate, "Запускаем сервер");
 
                 // Начинаем слушать соединения
-                handler = sListener.Accept();
-
+               // handler = sListener.Accept();
 
                
                 while (true)
                 {
-
                     // Начинаем слушать соединения
                     handler = sListener.Accept();
+
+
 
 
                     string data = null;
@@ -126,8 +126,8 @@ namespace SkyTalk
                         {
                             if(skytalkDataSet.users.Rows[index]["password"].Equals( message.Password) == true)
                             {
-                                backmessage.Command = "ОК";
-                                backmessage.Data = "Тут будет номер порта по которому будет дальнейшее соединение с клиентом в отдельном потоке";
+                                backmessage.Command = "Connect";
+                                backmessage.Data = "Тут будет номер порта";
 
                                 //на каждого клента будет запускаться отдельный поток с отдельным новым сокетом на индивидуальном порту.
                                //возможно я не прав, и есть другой путь.
