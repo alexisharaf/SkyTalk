@@ -65,7 +65,7 @@ namespace SkyTalk
 
             //ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
 
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11100);
 
             Socket sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -90,7 +90,10 @@ namespace SkyTalk
                
                 while (true)
                 {
-                   
+
+                    // Начинаем слушать соединения
+                    handler = sListener.Accept();
+
 
                     string data = null;
 
@@ -125,6 +128,12 @@ namespace SkyTalk
                             {
                                 backmessage.Command = "ОК";
                                 backmessage.Data = "Тут будет номер порта по которому будет дальнейшее соединение с клиентом в отдельном потоке";
+
+                                //на каждого клента будет запускаться отдельный поток с отдельным новым сокетом на индивидуальном порту.
+                               //возможно я не прав, и есть другой путь.
+                               // номера портов 11101 - первый пользователь
+                               //11102  - второй пользователь и тд.
+                               // этот поток на порту 11100 только для подключения и авторизации новых клиентов
                             }
                             else
                             {
