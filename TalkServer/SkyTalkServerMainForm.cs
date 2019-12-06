@@ -124,7 +124,7 @@ namespace SkyTalk
                             if(skytalkDataSet.users.Rows[index]["password"].Equals( message.Password) == true)
                             {
                                 backmessage.Command = "ОК";
-                                backmessage.Data = "Тут будет список пользователей онлaйн";
+                                backmessage.Data = "Тут будет номер порта по которому будет дальнейшее соединение с клиентом в отдельном потоке";
                             }
                             else
                             {
