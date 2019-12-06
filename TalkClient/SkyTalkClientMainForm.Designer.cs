@@ -29,13 +29,15 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.serverIpTextBox = new System.Windows.Forms.TextBox();
-            this.portTextBox = new System.Windows.Forms.TextBox();
             this.connectToServerButton = new System.Windows.Forms.Button();
             this.userListListBox = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
             this.userNameTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.passTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.localIPcomboBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -47,30 +49,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Server IP adress:";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(101, 100);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Port:";
-            // 
             // serverIpTextBox
             // 
             this.serverIpTextBox.Location = new System.Drawing.Point(136, 51);
             this.serverIpTextBox.Name = "serverIpTextBox";
-            this.serverIpTextBox.Size = new System.Drawing.Size(116, 20);
+            this.serverIpTextBox.Size = new System.Drawing.Size(136, 20);
             this.serverIpTextBox.TabIndex = 2;
             this.serverIpTextBox.Text = "192.168.0.7";
-            // 
-            // portTextBox
-            // 
-            this.portTextBox.Location = new System.Drawing.Point(136, 97);
-            this.portTextBox.Name = "portTextBox";
-            this.portTextBox.Size = new System.Drawing.Size(116, 20);
-            this.portTextBox.TabIndex = 3;
-            this.portTextBox.Text = "11111";
             // 
             // connectToServerButton
             // 
@@ -93,7 +78,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(67, 140);
+            this.label3.Location = new System.Drawing.Point(67, 111);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(63, 13);
             this.label3.TabIndex = 6;
@@ -101,23 +86,60 @@
             // 
             // userNameTextBox
             // 
-            this.userNameTextBox.Location = new System.Drawing.Point(136, 137);
+            this.userNameTextBox.Location = new System.Drawing.Point(136, 108);
             this.userNameTextBox.Name = "userNameTextBox";
-            this.userNameTextBox.Size = new System.Drawing.Size(116, 20);
+            this.userNameTextBox.Size = new System.Drawing.Size(136, 20);
             this.userNameTextBox.TabIndex = 7;
+            this.userNameTextBox.Text = "user1";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(74, 146);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Password:";
+            // 
+            // passTextBox
+            // 
+            this.passTextBox.Location = new System.Drawing.Point(136, 143);
+            this.passTextBox.Name = "passTextBox";
+            this.passTextBox.Size = new System.Drawing.Size(136, 20);
+            this.passTextBox.TabIndex = 9;
+            this.passTextBox.Text = "user1";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(85, 82);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(45, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "local IP:";
+            // 
+            // localIPcomboBox
+            // 
+            this.localIPcomboBox.FormattingEnabled = true;
+            this.localIPcomboBox.Location = new System.Drawing.Point(136, 79);
+            this.localIPcomboBox.Name = "localIPcomboBox";
+            this.localIPcomboBox.Size = new System.Drawing.Size(136, 21);
+            this.localIPcomboBox.TabIndex = 11;
             // 
             // SkyTalkClientMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(745, 522);
+            this.Controls.Add(this.localIPcomboBox);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.passTextBox);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.userNameTextBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.userListListBox);
             this.Controls.Add(this.connectToServerButton);
-            this.Controls.Add(this.portTextBox);
             this.Controls.Add(this.serverIpTextBox);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "SkyTalkClientMainForm";
             this.Text = "TalkClient";
@@ -129,13 +151,15 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox serverIpTextBox;
-        private System.Windows.Forms.TextBox portTextBox;
         private System.Windows.Forms.Button connectToServerButton;
         private System.Windows.Forms.ListBox userListListBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox userNameTextBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox passTextBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox localIPcomboBox;
     }
 }
 
