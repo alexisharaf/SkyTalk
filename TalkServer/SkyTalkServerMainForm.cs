@@ -41,7 +41,7 @@ namespace SkyTalk
                 ipAdressComboBox.Items.Add(ipHost.AddressList[i].ToString());
             }
 
-            // IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
+        
 
             addLogDelegate = new AddLogItem(updatelog);
 
@@ -65,7 +65,7 @@ namespace SkyTalk
 
             //ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
 
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11100);
 
             Socket sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -84,13 +84,16 @@ namespace SkyTalk
                 this.Invoke(this.addLogDelegate, "Запускаем сервер");
 
                 // Начинаем слушать соединения
-                handler = sListener.Accept();
-
+               // handler = sListener.Accept();
 
                
                 while (true)
                 {
-                   
+                    // Начинаем слушать соединения
+                    handler = sListener.Accept();
+
+
+
 
                     string data = null;
 
@@ -123,8 +126,14 @@ namespace SkyTalk
                         {
                             if(skytalkDataSet.users.Rows[index]["password"].Equals( message.Password) == true)
                             {
-                                backmessage.Command = "ОК";
-                                backmessage.Data = "Тут будет список пользователей онлaйн";
+                                backmessage.Command = "Connect";
+                                backmessage.Data = "Тут будет номер порта";
+
+                                //на каждого клента будет запускаться отдельный поток с отдельным новым сокетом на индивидуальном порту.
+                               //возможно я не прав, и есть другой путь.
+                               // номера портов 11101 - первый пользователь
+                               //11102  - второй пользователь и тд.
+                               // этот поток на порту 11100 только для подключения и авторизации новых клиентов
                             }
                             else
                             {
