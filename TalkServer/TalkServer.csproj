@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UserTreadClass.cs" />
+    <Compile Include="UserTreadSettingsClass.cs" />
     <Compile Include="NewUserForm.cs">
       <SubType>Form</SubType>
     </Compile>

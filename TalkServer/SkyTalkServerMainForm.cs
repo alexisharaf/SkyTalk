@@ -23,6 +23,8 @@ namespace SkyTalk
 
         Thread commandThread;
 
+        List <UserTreadSettingsClass> userslist;
+
         
 
         public delegate void AddLogItem(String myString);
@@ -49,8 +51,10 @@ namespace SkyTalk
 
 
             commandThread = new Thread(ControlCommandsFlow);
-            // formatter = new BinaryFormatter();
 
+            userslist = new List<UserTreadSettingsClass>();
+
+            
             
         }
 
@@ -130,9 +134,18 @@ namespace SkyTalk
                             if(skytalkDataSet.users.Rows[index]["password"].Equals( message.Password) == true)
                             {
                                 backmessage.Command = "Connect";
-                                backmessage.Data = "Тут будет номер порта";
 
-                                ThreadPool.QueueUserWorkItem(userthread, new UserTreadClass());
+                                UserTreadSettingsClass ut = new UserTreadSettingsClass();
+
+                                ut.username = message.User;
+                                ut.ipadr = message.Data;
+                                ut.port = userslist.Count + 11101;
+
+                                userslist.Add(ut);
+
+                                backmessage.Data = ut.port.ToString();
+
+                               //ThreadPool.QueueUserWorkItem(userthread, ut);
 
                                 //на каждого клента будет запускаться отдельный поток с отдельным новым сокетом на индивидуальном порту.
                                //возможно я не прав, и есть другой путь.
@@ -185,8 +198,8 @@ namespace SkyTalk
             }
             finally
             {
-                //   handler.Shutdown(SocketShutdown.Both);
-                //   handler.Close();
+                   handler.Shutdown(SocketShutdown.Both);
+                   handler.Close();
 
                 MessageBox.Show("Все пропало");
             }
