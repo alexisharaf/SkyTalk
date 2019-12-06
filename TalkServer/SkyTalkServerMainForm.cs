@@ -22,8 +22,9 @@ namespace SkyTalk
         IPAddress ipAddr;
 
         Thread commandThread;
-       
 
+        public delegate void AddLogItem(String myString);
+        public AddLogItem addLogDelegate;
 
         public SkyTalkServerMainForm()
         {
@@ -42,6 +43,7 @@ namespace SkyTalk
 
             // IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
 
+            addLogDelegate = new AddLogItem(updatelog);
 
 
             commandThread = new Thread(ControlCommandsFlow);
@@ -50,13 +52,20 @@ namespace SkyTalk
         }
 
 
+        private void updatelog(string msgtolog)
+        {
+            logTableAdapter.Insert(msgtolog, DateTime.Now);
+            logTableAdapter.Fill(this.skytalkDataSet.log);
+
+        }
+
         private void ControlCommandsFlow()
         {
             Socket handler = null;
 
             //ipAddr = ipHost.AddressList[ipAdressComboBox.SelectedIndex];
 
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, Convert.ToInt32(portNumberTextBox.Text));
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, 11111);
 
             Socket sListener = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -65,8 +74,10 @@ namespace SkyTalk
                 sListener.Bind(ipEndPoint);
                 sListener.Listen(10);
 
+
                 
-                logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("Запускаем сервер"); });
+
+                this.Invoke(this.addLogDelegate, "Запускаем сервер");
 
                
 
@@ -76,7 +87,7 @@ namespace SkyTalk
                 {
                     handler = sListener.Accept();
 
-                    logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("К серверу подключились. Получаем данные"); });
+                    //logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add("К серверу подключились. Получаем данные"); });
                     string data = null;
 
                     // Мы дождались клиента, пытающегося с нами соединиться
@@ -96,10 +107,10 @@ namespace SkyTalk
 
                         MessageClass message = (MessageClass)formatter.Deserialize(mem_stream);
 
-                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.User.ToString()); });
-                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
-                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
-                        logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
+                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.User.ToString()); });
+                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Password.ToString()); });
+                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Command.ToString()); });
+                       // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.Data.ToString()); });
 
 
                         // Отправляем ответ клиенту
@@ -141,5 +152,41 @@ namespace SkyTalk
             commandThread.Start();
             
         }
+
+        private void usersBindingNavigatorSaveItem_Click(object sender, EventArgs e)
+        {
+            this.Validate();
+            this.usersBindingSource.EndEdit();
+            this.tableAdapterManager.UpdateAll(this.skytalkDataSet);
+
+        }
+
+        private void SkyTalkServerMainForm_Load(object sender, EventArgs e)
+        {
+            // TODO: This line of code loads data into the 'skytalkDataSet.log' table. You can move, or remove it, as needed.
+            this.logTableAdapter.Fill(this.skytalkDataSet.log);
+            // TODO: This line of code loads data into the 'skytalkDataSet.users' table. You can move, or remove it, as needed.
+            this.usersTableAdapter.Fill(this.skytalkDataSet.users);
+
+        }
+
+        private void newUserButton_Click(object sender, EventArgs e)
+        {
+            NewUserForm nuf = new NewUserForm();
+
+            if(nuf.ShowDialog() == DialogResult.OK)
+            {
+                usersTableAdapter.Insert(nuf.username, nuf.password);
+
+                logTableAdapter.Insert("Зарегистрирован новый пользователь " + nuf.username, DateTime.Now);
+
+            }
+
+            usersTableAdapter.Fill(this.skytalkDataSet.users);
+            logTableAdapter.Fill(this.skytalkDataSet.log);
+
+        }
+
+       
     }
 }
