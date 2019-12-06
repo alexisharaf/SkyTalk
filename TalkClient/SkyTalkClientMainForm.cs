@@ -56,7 +56,7 @@ namespace SkyTalk
            
 
             // Устанавливаем удаленную точку для сокета
-            IPEndPoint remoteipEndPoint = new IPEndPoint(remoteipAddr, 11111);
+            IPEndPoint remoteipEndPoint = new IPEndPoint(remoteipAddr, 11100);
 
             string message = "Привет";
 
@@ -110,13 +110,18 @@ namespace SkyTalk
                      ansmessage = (MessageClass)formatter.Deserialize(ans_mem_stream);
                  }
 
-                //string data = Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                if (ansmessage.Command.Equals("Connect") == true)
+                {
 
-                userListListBox.Items.Add(ansmessage.Data);
+                    userListListBox.Items.Add(ansmessage.Data);
+                    //Запускаем новый поток с новым сокетом, в котором будем дальше общаться с сервером 
+                }
+                else
+                {
+                    MessageBox.Show(ansmessage.Data, ansmessage.Command);
+                }
 
-
-               // }
-               // while (message.IndexOf("#END#") == -1);
+              
 
                 // Освобождаем сокет
                 socketsender.Shutdown(SocketShutdown.Both);
