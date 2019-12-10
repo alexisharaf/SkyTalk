@@ -120,50 +120,70 @@ namespace SkyTalk
                         this.Invoke(this.addLogDelegate, "С командой " + message.Command.ToString());
                         this.Invoke(this.addLogDelegate, "С адреса "  + message.Data.ToString());
 
-                       
-                        int index = this.usersBindingSource.Find("username", message.User);
 
-                       if ( index > -1)
+                        if (message.Command.Equals("Connect") == true)
                         {
-                            if(skytalkDataSet.users.Rows[index]["password"].Equals( message.Password) == true)
+
+                            int index = this.usersBindingSource.Find("username", message.User);
+
+                            if (index > -1)
                             {
-                                backmessage.Command = "Connect";
+                                if (skytalkDataSet.users.Rows[index]["password"].Equals(message.Password) == true)
+                                {
+                                    backmessage.Command = "Connect";
 
-                                UserTreadSettingsClass ut = new UserTreadSettingsClass();
+                                    UserTreadSettingsClass ut = new UserTreadSettingsClass();
 
-                                ut.username = message.User;
-                                ut.ipadr = message.Data;
-                                ut.port = userslist.Count + 11101;
+                                    ut.username = message.User;
+                                    ut.ipadr = message.Data;
+                                    ut.port = userslist.Count + 11101;
 
-                                userslist.Add(ut);
+                                    userslist.Add(ut);
 
-                                backmessage.Data = ut.port.ToString();
+                                    backmessage.Data = ut.port.ToString();
 
-                               //ThreadPool.QueueUserWorkItem(userthread, ut);
+                                    //ThreadPool.QueueUserWorkItem(userthread, ut);
 
-                                //на каждого клента будет запускаться отдельный поток с отдельным новым сокетом на индивидуальном порту.
-                               //возможно я не прав, и есть другой путь.
-                               // номера портов 11101 - первый пользователь
-                               //11102  - второй пользователь и тд.
-                               // этот поток на порту 11100 только для подключения и авторизации новых клиентов
+                                    //на каждого клента будет запускаться отдельный поток с отдельным новым сокетом на индивидуальном порту.
+                                    //возможно я не прав, и есть другой путь.
+                                    // номера портов 11101 - первый пользователь
+                                    //11102  - второй пользователь и тд.
+                                    // этот поток на порту 11100 только для подключения и авторизации новых клиентов
 
 
-//TODO пользователь может залогиниться несколько раз. Сделать проверку
+                                    //TODO пользователь может залогиниться несколько раз. Сделать проверку
+                                }
+                                else
+                                {
+                                    backmessage.Command = "PasswordWrong";
+                                    backmessage.Data = "Плохой пароль";
+                                    this.Invoke(this.addLogDelegate, "Плохой пароль ");
+                                }
                             }
                             else
                             {
-                                backmessage.Command = "PasswordWrong";
-                                backmessage.Data = "Плохой пароль";
-                                this.Invoke(this.addLogDelegate, "Плохой пароль ");
+                                backmessage.Command = "ConnectWrong";
+                                backmessage.Data = "Пользователь не найден";
+                                this.Invoke(this.addLogDelegate, "Пользователь не найден ");
                             }
                         }
-                        else
+
+                        if(message.Command.Equals("GetUsersList") == true)
                         {
-                            backmessage.Command = "ConnectWrong";
-                            backmessage.Data = "Пользователь не найден";
-                            this.Invoke(this.addLogDelegate, "Пользователь не найден " );
+                            backmessage.Command = "GetUsersList";
+
+                            for (int i = 0; i < userslist.Count; i++)
+                            {
+                                backmessage.Data += userslist[i].username + ";";
+                            }
                         }
 
+
+                        if(message.Command.Equals("CallUser") == true)
+                        {
+                          backmessage.Data =  userslist.Find(x => x.username.Equals(message.Data)).ipadr;
+                            
+                        }
 
                         // logListBox.BeginInvoke((Action)delegate () { logListBox.Items.Add(message.User.ToString()); });
                         
