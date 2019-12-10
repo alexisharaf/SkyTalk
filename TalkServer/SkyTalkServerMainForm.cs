@@ -181,7 +181,8 @@ namespace SkyTalk
 
                         if(message.Command.Equals("CallUser") == true)
                         {
-                          backmessage.Data =  userslist.Find(x => x.username.Equals(message.Data)).ipadr;
+                          
+                            backmessage.Data =  userslist.Find(x => x.username.Equals(message.Data)).ipadr;
                             
                         }
 
