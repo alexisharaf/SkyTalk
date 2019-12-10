@@ -38,6 +38,8 @@
             this.passTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.localIPcomboBox = new System.Windows.Forms.ComboBox();
+            this.getUsersListButton = new System.Windows.Forms.Button();
+            this.CallUserButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -126,11 +128,32 @@
             this.localIPcomboBox.Size = new System.Drawing.Size(136, 21);
             this.localIPcomboBox.TabIndex = 11;
             // 
+            // getUsersListButton
+            // 
+            this.getUsersListButton.Location = new System.Drawing.Point(150, 226);
+            this.getUsersListButton.Name = "getUsersListButton";
+            this.getUsersListButton.Size = new System.Drawing.Size(75, 23);
+            this.getUsersListButton.TabIndex = 12;
+            this.getUsersListButton.Text = "Get Users List";
+            this.getUsersListButton.UseVisualStyleBackColor = true;
+            this.getUsersListButton.Click += new System.EventHandler(this.getUsersListButton_Click);
+            // 
+            // CallUserButton
+            // 
+            this.CallUserButton.Location = new System.Drawing.Point(501, 438);
+            this.CallUserButton.Name = "CallUserButton";
+            this.CallUserButton.Size = new System.Drawing.Size(75, 23);
+            this.CallUserButton.TabIndex = 13;
+            this.CallUserButton.Text = "Call User";
+            this.CallUserButton.UseVisualStyleBackColor = true;
+            // 
             // SkyTalkClientMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(745, 522);
+            this.ClientSize = new System.Drawing.Size(731, 522);
+            this.Controls.Add(this.CallUserButton);
+            this.Controls.Add(this.getUsersListButton);
             this.Controls.Add(this.localIPcomboBox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.passTextBox);
@@ -160,6 +183,8 @@
         private System.Windows.Forms.TextBox passTextBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox localIPcomboBox;
+        private System.Windows.Forms.Button getUsersListButton;
+        private System.Windows.Forms.Button CallUserButton;
     }
 }
 
