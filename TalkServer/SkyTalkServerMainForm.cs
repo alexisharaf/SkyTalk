@@ -171,6 +171,7 @@ namespace SkyTalk
                         if(message.Command.Equals("GetUsersList") == true)
                         {
                             backmessage.Command = "GetUsersList";
+                            backmessage.Data = null;
 
                             for (int i = 0; i < userslist.Count; i++)
                             {
