@@ -21,6 +21,8 @@ namespace SkyTalk
 
         IPHostEntry localIPHost;
         IPAddress localipAddr;
+        IPAddress remoteipAddr;
+        IPEndPoint remoteipEndPoint;
 
 
         public SkyTalkClientMainForm()
@@ -42,23 +44,22 @@ namespace SkyTalk
 
         }
 
-        private void connectToServerButton_Click(object sender, EventArgs e)
+        private MessageClass SendCommandToServer(MessageClass msgToServer)
         {
+            MessageClass msgFromSrerver = null;
+
             // Буфер для входящих данных
             byte[] bytes = new byte[65000];
 
-            localipAddr = localIPHost.AddressList[localIPcomboBox.SelectedIndex];
-
-
-            // Соединяемся с удаленным устройством
-
-            IPAddress remoteipAddr = IPAddress.Parse(serverIpTextBox.Text);
            
 
-            // Устанавливаем удаленную точку для сокета
-            IPEndPoint remoteipEndPoint = new IPEndPoint(remoteipAddr, 11100);
+            // Соединяемся с удаленным устройством
+           
 
-            string message = "Привет";
+
+            // Устанавливаем удаленную точку для сокета
+            remoteipEndPoint = new IPEndPoint(remoteipAddr, 11100);
+
 
             try
             {                //Создаем сокет
@@ -67,61 +68,54 @@ namespace SkyTalk
                 // Соединяем сокет с удаленной точкой
                 socketsender.Connect(remoteipEndPoint);
 
-              // do
-               // {
 
-                    //Console.Write("Введите сообщение: ");
-                    //message = Console.ReadLine();
 
-                    //Console.WriteLine("Сокет соединяется с {0} ", sender.RemoteEndPoint.ToString());
-                    byte[] msg = Encoding.UTF8.GetBytes(message);
+            //    MessageClass mess = new MessageClass();
 
-                MessageClass mess = new MessageClass();
-
-                mess.User = userNameTextBox.Text.Trim();
-                mess.Password = passTextBox.Text.Trim();
-                mess.Command = "Connect";
-                mess.Data = localipAddr.ToString();
+            //    mess.User = userNameTextBox.Text.Trim();
+            //    mess.Password = passTextBox.Text.Trim();
+            //    mess.Command = "Connect";
+            //    mess.Data = localipAddr.ToString();
 
                 BinaryFormatter serializer = new BinaryFormatter();
 
                 MemoryStream mem_stream = new MemoryStream();
-                serializer.Serialize(mem_stream, mess);
+                serializer.Serialize(mem_stream, msgToServer);
 
-                
+
                 // Отправляем данные через сокет
                 int bytesSent = socketsender.Send(mem_stream.GetBuffer());
 
                 Thread.Sleep(500);
 
-               
 
-                    // Получаем ответ от сервера
+
+                // Получаем ответ от сервера
                 int bytesRec = socketsender.Receive(bytes);
 
-                MessageClass ansmessage = null;
-                 if (bytesRec > 0)
-                 {
-
-
-                     MemoryStream ans_mem_stream = new MemoryStream(bytes);
-                     BinaryFormatter formatter = new BinaryFormatter();
-                                       
-                     ansmessage = (MessageClass)formatter.Deserialize(ans_mem_stream);
-                 }
-
-                if (ansmessage.Command.Equals("Connect") == true)
+                //MessageClass ansmessage = null;
+                if (bytesRec > 0)
                 {
 
-                    userListListBox.Items.Add(ansmessage.Data);
+
+                    MemoryStream ans_mem_stream = new MemoryStream(bytes);
+                    BinaryFormatter formatter = new BinaryFormatter();
+
+                    msgFromSrerver = (MessageClass)formatter.Deserialize(ans_mem_stream);
+                }
+
+         //       if (ansmessage.Command.Equals("Connect") == true)
+         //       {
+
+         //           userListListBox.Items.Add(ansmessage.Data);
                     //Запускаем новый поток с новым сокетом, в котором будем дальше общаться с сервером 
-                }
-                else
-                {
-                    MessageBox.Show(ansmessage.Data, ansmessage.Command);
-                }
+         //       }
+         //       else
+         //       {
+         //           MessageBox.Show(ansmessage.Data, ansmessage.Command);
+         //       }
 
-              
+
 
                 // Освобождаем сокет
                 socketsender.Shutdown(SocketShutdown.Both);
@@ -132,7 +126,69 @@ namespace SkyTalk
             {
                 MessageBox.Show(ex.ToString());
             }
+
+
+
+
+            return msgFromSrerver;
+        }
+
+
+        private void connectToServerButton_Click(object sender, EventArgs e)
+        {
+
+            localipAddr = localIPHost.AddressList[localIPcomboBox.SelectedIndex];
+            remoteipAddr = IPAddress.Parse(serverIpTextBox.Text);
+
+            MessageClass mess = new MessageClass();
+
+            mess.User = userNameTextBox.Text.Trim();
+            mess.Password = passTextBox.Text.Trim();
+            mess.Command = "Connect";
+            mess.Data = localipAddr.ToString();
+
+
+
+            MessageClass ansmessage = SendCommandToServer(mess);
+                 
+            if (ansmessage.Command.Equals("Connect") == true)
+            {
+
+                userListListBox.Items.Add(ansmessage.Data);
+                    //Запускаем новый поток с новым сокетом, в котором будем дальше общаться с сервером 
+            }
+            else
+            {
+                MessageBox.Show(ansmessage.Data, ansmessage.Command);
+            }
+
            
+        }
+
+        private void getUsersListButton_Click(object sender, EventArgs e)
+        {
+
+            MessageClass mess = new MessageClass();
+
+            mess.User = userNameTextBox.Text.Trim();
+            mess.Password = passTextBox.Text.Trim();
+            mess.Command = "GetUsersList";
+            mess.Data = localipAddr.ToString();
+
+
+
+            MessageClass ansmessage = SendCommandToServer(mess);
+
+            if (ansmessage.Command.Equals("GetUsersList") == true)
+            {
+
+                userListListBox.Items.Add(ansmessage.Data);
+                //Запускаем новый поток с новым сокетом, в котором будем дальше общаться с сервером 
+            }
+            else
+            {
+                MessageBox.Show(ansmessage.Data, ansmessage.Command);
+            }
         }
     }
 }
